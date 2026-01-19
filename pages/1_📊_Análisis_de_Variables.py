@@ -7,7 +7,7 @@ from src.datos import cargar_datos
 st.set_page_config(page_title="Analisis de Variables", page_icon="📊")
 
 st.sidebar.header("Análisis de Variables")
-st.markdown("""
+st.sidebar.markdown("""
     <style>
 .small-font {
     font-size:18px !important;
@@ -17,13 +17,12 @@ st.markdown("""
 <p class="small-font">
     Explora la distribución estadística detallada (media, cuartiles, outliers) 
     seleccionando una métrica y un año específico.
-</p>""", unsafe_allow_html= True
-)
+</p>""", unsafe_allow_html= True)
 
 config_metrics = {
     "Spending_B":{
         "label": "Gasto Militar",
-        "suffix": " B",
+        "suffix": " USD (B)",
         "desc_media": "Promedio Global",
         "desc_mediana": "Valor Típico",
         "desc_desvio": "Desvio Estandar",
@@ -78,8 +77,15 @@ config_metrics = {
     }
 }
 
-def generar_graficos(df, year):
-    return
+COLORES_REGIONES = {
+    'Europe': '#636EFA',
+    'Asia & Oceania': '#EF553B',
+    'Americas': '#AB63FA',
+    'Middle East': '#00CC96',
+    'Africa': '#FFA15A',
+    "(?)": "#f0f2f6",  
+    "Mundo": "#f0f2f6"
+}
 
 def activar_analisis():
     st.session_state.analisis_listo = True
@@ -127,28 +133,7 @@ if __name__ == '__main__':
             col_kpi, col_grafico = st.columns([1,2], gap= 'large')
             
             with col_kpi:
-                tab_central, tab_dispersion, tab_forma = st.tabs(["Tend. Central", "Disperion", "Forma"])
-
-                # with tab_central:
-                #     if var_selected == "Spending_B":
-                #         st.metric('Gasto total (Media)', f'${stats['media']:,.2f} B')
-                #         st.metric('Gasto Típico (Mediana)', f'${stats['mediana']:,.2f} B')
-                    
-                #     elif var_selected == 'Growth_Rate':
-                #         st.metric('Crecimiento Total (Media)', f'{stats['media']:,.2f}%')
-                #         st.metric('Crecimiento Típico (Mediana)', f'{stats['mediana']:,.2f}%')
-
-                #     elif var_selected == 'Share_of_GDP':
-                #         st.metric('XXX Total (Media)', f'{stats['media']:,.2f}%')
-                #         st.metric('XXX Típico (Mediana)', f'{stats['mediana']:,.2f}%')
-
-                #     elif var_selected == 'Share_of_Govt_Spending':
-                #         st.metric('XXX Total (Media)', f'{stats['media']:,.2f}%')
-                #         st.metric('XXX Típico (Mediana)', f'{stats['mediana']:,.2f}%')
-
-                #     elif var_selected == 'Per_Capita':
-                #         st.metric('XXX Total (Media)', f'${stats['media']:,.2f}')
-                #         st.metric('XXX Típico (Mediana)', f'${stats['mediana']:,.2f}')
+                tab_central, tab_dispersion, tab_forma = st.tabs(["Tend. Central", "Dispersión", "Forma"])
 
                 with tab_central:
                     #METRICA 1 -> MEDIA
@@ -209,7 +194,7 @@ if __name__ == '__main__':
             df_plot = df_plot.dropna(subset= [var_selected])
 
             with col_grafico:
-                opciones= ['Histograma', 'Boxplot', 'Strip Plot']
+                opciones= ['Histograma', 'Boxplot']
 
                 tipo_grafico= st.pills(
                     "Visualización",
@@ -230,17 +215,18 @@ if __name__ == '__main__':
                     df_plot = df_plot[df_plot[var_selected] > 0]
 
                     if n_excluidos > 0:
-                        st.warning(f'⚠️ Nota: Se ocultaron {n_excluidos} paises con valores negativos o cero porque no son compatibles con la escala logarítmica.')
+                        st.warning(f'⚠️ Nota: Se ocultaron {n_excluidos} paises con valores negativos o cero porque son incompatibles con la escala logarítmica.')
 
                 if tipo_grafico == "Histograma":
                     fig= px.histogram(
                         df_plot,
                         x= var_selected,
                         nbins= 40,
-                        color= color_map,
+                        color= 'Region',
                         log_y= usar_log,
                         title= f'Distribución de {titulo_eje}',
-                        hover_data= ['Country']
+                        hover_data= ['Country'],
+                        color_discrete_map=COLORES_REGIONES
                     )
                     fig.add_vline(x= stats['media'], line_dash = 'dash', line_color= 'red', annotation_text= 'Media')
                     fig.add_vline(x= stats['mediana'], line_dash = 'dot', line_color= 'green', annotation_text= 'Mediana')
@@ -249,24 +235,13 @@ if __name__ == '__main__':
                     fig= px.box(
                         df_plot,
                         x= var_selected,
-                        y= color_map,
+                        y= 'Region',
                         points= 'all',
                         log_x= usar_log,
                         title= f'Dispersión y Outliers: {titulo_eje}',
                         hover_name= "Country",
-                        color= color_map
-                    )
-
-                elif tipo_grafico == "Strip Plot":
-                    fig= px.strip(
-                       df_plot,
-                       x= var_selected,
-                       y= color_map,
-                       color= color_map,
-                       log_x= usar_log,
-                       title= f'Distribución por puntos: {titulo_eje}',
-                       hover_name= 'Country',
-                       stripmode= 'overlay'
+                        color= 'Region',
+                        color_discrete_map= COLORES_REGIONES
                     )
                 
                 fig.update_layout(
@@ -279,7 +254,7 @@ if __name__ == '__main__':
                 st.plotly_chart(fig, use_container_width= True)
 
                 max_pais = df_plot.loc[df_plot[var_selected].idxmax()]
-                st.info(f'**Máximo** {max_pais['Country']} con {max_pais[var_selected]:,.2f}{cfg['suffix']}')
+                st.info(f'**Máximo**: {max_pais['Country']} con {max_pais[var_selected]:,.2f}{cfg['suffix']}')
 
 
 
