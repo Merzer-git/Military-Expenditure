@@ -1,6 +1,6 @@
 import streamlit as st
-import numpy as np
 import plotly.express as px
+import pandas as pd
 from src.clase_analizador import Analizador_Estadistico
 from src.datos import cargar_datos
 
@@ -228,8 +228,8 @@ if __name__ == '__main__':
                         hover_data= ['Country'],
                         color_discrete_map=COLORES_REGIONES
                     )
-                    fig.add_vline(x= stats['media'], line_dash = 'dash', line_color= 'red', annotation_text= 'Media')
-                    fig.add_vline(x= stats['mediana'], line_dash = 'dot', line_color= 'green', annotation_text= 'Mediana')
+                    fig.add_vline(x= stats['media'], line_dash = 'dash', line_color= 'red', annotation_text= 'Media', annotation_textangle= -90)
+                    fig.add_vline(x= stats['mediana'], line_dash = 'dot', line_color= 'green', annotation_text= 'Mediana', annotation_position= 'top left', annotation_textangle= 90)
 
                 elif tipo_grafico == "Boxplot":
                     fig= px.box(

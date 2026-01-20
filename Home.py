@@ -32,7 +32,7 @@ df = cargar_datos()
 st.title("🌎 Global Defense Monitor")
 st.subheader("La Guerra en números: 75 años de Gasto Militar")
 st.markdown("""
-    **Este dashboard explora la evoluciÓn en el Gasto Militar a nivel global, regional y por países.** Se analizan datos históricos de partidas presupuestarias destinadas a defensa recolectadas por el **SIPRI** (1949 - 2024) complementada con datos del **Banco Mundial** para entender las dinámicas de rearme, hegemonía y los conflictos geopolíticos que moldearon el mundo moderno.
+    **Este dashboard explora la evolución en el Gasto Militar a nivel global, regional y por países.** Se analizan datos históricos de partidas presupuestarias destinadas a defensa recolectadas por el **SIPRI** (1949 - 2024) complementada con datos del **Banco Mundial** para entender las dinámicas de rearme, hegemonía y los conflictos geopolíticos que moldearon el mundo moderno.
 """)
 st.divider()
 with st.expander("📜 Contexto Histórico: De la Guerra Fría a la actualidad"):

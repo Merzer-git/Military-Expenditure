@@ -1,8 +1,6 @@
-from cProfile import label
-from click import option
 import streamlit as st
-import numpy as np
 import plotly.express as px
+import pandas as pd
 from src.datos import cargar_datos
 
 st.set_page_config(page_title= "Análisis Temporal", page_icon="🕚", layout= 'wide')
@@ -69,9 +67,19 @@ VARSOVIA = {
 
 color_bloque= {
     'OTAN': '#324376',
-    'United States of America': '#324376',
     'Pacto de Varsovia': '#BA1200',
-    'USSR': '#BA1200'
+    'USSR': '#BA1200',
+    'United States of America': '#324376',
+    'United Kingdom': '#9D4EDD',
+    'Germany': '#DC9E82',
+    'France': '#173753',
+    'Russia': '#A5402D',
+    'Ukraine': '#E5D352',
+    'China': '#F8333C',
+    'India': '#DC851F',
+    'Saudi Arabia': '#63A46C',
+    'Israel': '#2892D7'
+
 }
 
 eventos_importantes= {
@@ -101,6 +109,23 @@ eventos_importantes= {
     'Guerra Ucrania (2022)': 2022,
     'Guerra de Gaza (2023)': 2023
 }
+
+potencias_modernas = [
+    #AMERICAS
+    'United States of America',
+    #EUROPE
+    'United Kingdom',
+    'Germany',
+    'France',
+    'Russia',
+    'Ukraine',
+    #ASIA & OCEANIA
+    'China',
+    'India',
+    #MIDDLE EAST
+    'Saudi Arabia',
+    'Israel'
+]
 
 if __name__ == '__main__':
     df = cargar_datos()
@@ -208,16 +233,44 @@ if __name__ == '__main__':
             )
 
         st.plotly_chart(fig_fase2, use_container_width= True)
-    #with tab_3:
 
+    with tab_3:
+        df_fase3 = df[
+            (df['Country'].isin(potencias_modernas)) &
+            (df['Year'] >= 1991)
+        ]
 
+        df_evolucion_fase3 = df_fase3.groupby(['Year', 'Country'])['Spending_B'].sum().reset_index()
+        with st.expander("💥 Agrega eventos al gráfico", expanded= False):
+            eventos_seleccionados = st.multiselect(
+                'Selecciona eventos',
+                options= ['Dividendos de la Paz (1991)', 'Atentado a las Torres Gemelas (2001)','Invasión de Irak (2003)', 'Crisis Financiera (2008)', 'Anexión de Crimea (2014)', 'Atentados en París (2015)', 'Intervención Saudí en Yemen (2015)', 'Pandemia COVID-19 (2020)', 'Guerra Ucrania (2022)', 'Guerra de Gaza (2023)']
+            )
 
+        fig_fase3= px.line(
+            df_evolucion_fase3,
+            x= 'Year',
+            y= 'Spending_B',
+            color= 'Country',
+            color_discrete_map= color_bloque,
+            labels= {'Spending_B': 'Gasto (Billones USD)', 'Year': 'Año'},
+            title= 'Evolución del Gasto de las Potencias Modernas'
+        )
 
+        for evento in eventos_seleccionados:
+            year_evento = eventos_importantes[evento]
 
+            fig_fase3.add_vline(
+                x= year_evento,
+                line_width= 1,
+                line_dash= 'dash',
+                line_color= 'gray',
+                annotation_text= evento,
+                annotation_position= 'top left',
+                annotation_textangle= -90
+            )
 
-
-
-
+        st.plotly_chart(fig_fase3, use_container_width= True)
 
 st.markdown("""
     <style>

@@ -1,8 +1,7 @@
 import streamlit as st
-import numpy as np
+import pandas as pd
 import plotly.express as px
 from src.datos import cargar_datos
-from src.clase_analizador import Analizador_Estadistico
 
 st.set_page_config(page_title="Panorama Global", page_icon="🌐", layout= 'wide')
 st.sidebar.header("Panorama Global")
@@ -54,7 +53,6 @@ if __name__ == '__main__':
             color_discrete_map=COLORES_REGIONES
         )
         st.plotly_chart(fig_area, use_container_width= True)
-        st.divider()
         c1, c2 = st.columns([3,1])
         cols_jerarquia = ['Region', 'Subregion', 'Country']
 
