@@ -21,6 +21,10 @@ options_selectbox = ['Spending_B', 'Growth_Rate', 'Share_of_GDP', 'Per_Capita', 
 def activar_analisis():
     st.session_state.analisis_listo = True
 
+def formatear_intervalo(intervalo):
+    """Convierte un intervalo de Pandas al formato estadístico [a; b)"""
+    return f"[{intervalo.left:.3f}; {intervalo.right:.3f})"
+
 def generar_tabla_frecuencias(df, variable, year=None):
     if variable in variables_temporales:
         if year is not None:
@@ -49,6 +53,10 @@ def generar_tabla_frecuencias(df, variable, year=None):
     interv = pd.cut(datos_validos, bins= N, right= False)
     tabla = interv.value_counts().sort_index().reset_index()
     tabla.columns= ['Intervalo', 'Frecuencia Abs. (fi)']
+    
+    # Formatear intervalos al formato estadístico [a; b)
+    tabla['Intervalo'] = tabla['Intervalo'].apply(formatear_intervalo)
+    
     total_datos = tabla['Frecuencia Abs. (fi)'].sum()
     tabla['Frecuencia Rel. (hi)'] = tabla['Frecuencia Abs. (fi)'] / total_datos
     tabla['Frecuencia Abs. Acumulada (Fi)'] = tabla['Frecuencia Abs. (fi)'].cumsum()
@@ -69,6 +77,8 @@ def filtro_df_operacion(df, variable, operador, valor):
         return df[variable] > valor
     elif operador == '<':
         return df[variable] < valor
+    elif operador == '=':
+        return df[variable] == valor
     else:
         return pd.Series(([False]*len(df)))
 
@@ -102,6 +112,14 @@ if __name__ == '__main__':
         if 'analisis_listo' not in st.session_state:
             st.session_state.analisis_listo = False
 
+        col_btn_1, col_aviso = st.columns([1, 5], vertical_alignment= 'center')
+        with col_btn_1:
+            if st.button('Generar Tabla', type='primary', on_click=activar_analisis):
+                pass
+        
+        with col_aviso:
+            st.info("ℹ️ Se está aplicando Trimming (truncamiento) al 5% superior (recorte del percentil 95) para excluir valores extremos que rompen los intervalos")
+
         if st.session_state.analisis_listo:
             tabla_frec, n, recorrido, intervalos, amplitud, dif = generar_tabla_frecuencias(df_sin_outliers, var_selected, year_selected)
             st.dataframe(tabla_frec)
@@ -112,7 +130,7 @@ if __name__ == '__main__':
         tipo_evento = st.radio(
             'Seleccione el tipo de evento a calcular',
             ['Evento Simple', 'Evento Compuesto'],
-            index= 0,
+            index= None,
             horizontal= True
         )
 
@@ -161,7 +179,7 @@ if __name__ == '__main__':
                 options_B = [op for op in options_selectbox if op != var_selected]
                 var_selectedB = st.selectbox(
                     'Variable B',
-                    options= options_B,
+                    options= options_B + ['Region', 'Subregion'],
                     index= 0,
                     placeholder= 'Seleccione una variable...'
                 )
@@ -174,7 +192,7 @@ if __name__ == '__main__':
                     disabled= (var_selectedB not in variables_temporales)
                 )
             
-            cols = st.columns([2.4, 1, 1, 0.8, 2.4, 1, 1, 0.5, 1.5], gap= 'small', vertical_alignment= 'center')
+            cols = st.columns([2.4, 1, 1, 0.8, 2.4, 1, 1.5, 0.5, 1], gap= 'small', vertical_alignment= 'center')
 
             with cols[0]:   #VARIABLE A
                 st.markdown(f"##### **{var_selected}**")
@@ -202,7 +220,7 @@ if __name__ == '__main__':
             with cols[5]:   #OPERADOR B
                 operadorB = st.selectbox(
                     'Op B',
-                    options= ['<', '>'],
+                    options= ['<', '>', '='],
                     label_visibility= 'collapsed',
                     key= 'op_b'
                 )
@@ -210,7 +228,7 @@ if __name__ == '__main__':
                 if pd.api.types.is_numeric_dtype(df_sin_outliers[var_selectedB]):
                     val_b = st.number_input('Val B', value= 0.0, label_visibility= 'collapsed', key= 'val_b')
                 else:
-                    val_b = st.selectbox('Val B', df[var_selected].unique(), label_visibility= 'collapsed', key= 'val_b')
+                    val_b = st.selectbox('Val B', df_sin_outliers[var_selectedB].unique(), label_visibility= 'collapsed', key= 'val_b')
             with cols[7]:   #IGUAL
                 igual_button_C = st.button(
                     '=',
@@ -219,26 +237,59 @@ if __name__ == '__main__':
                 )
             with cols[8]:   #RESULTADO
                 if igual_button_C:
-                    df_base = df_sin_outliers.copy()
-                    df_comun = df_base.dropna(subset=[var_selected, var_selectedB])
-                    tamaño_muestra = len(df_comun)
-
-                    if tamaño_muestra == 0:
-                        st.error("No hay registros que tengan datos para ambas variables simultáneamente.")
+                    # Usar df completo para variables categóricas (Region, Subregion)
+                    if var_selectedB in ['Region', 'Subregion']:
+                        df_base = df.copy()  # Usar df original, sin filtrado de outliers
                     else:
-                        mascara_A = filtro_df_operacion(df_comun, var_selected, operadorA, val_a)
-                        mascara_B = filtro_df_operacion(df_comun, var_selectedB, operadorB, val_b)
-
-                        if '∪' in op_Conjunto:
-                            mascara_final = mascara_A | mascara_B
-                        elif '∩' in op_Conjunto:
-                            mascara_final = mascara_A & mascara_B
+                        df_base = df_sin_outliers.copy()  # Usar df filtrado para variables numéricas
                     
-                        casos = mascara_final.sum()
-                        prob = (casos / tamaño_muestra) * 100
+                    # Filtrar por año si la variable es temporal
+                    if var_selected in variables_temporales and year_selected is not None:
+                        df_base = df_base[df_base['Year'] == year_selected]
+                    if var_selectedB in variables_temporales and year_selectedB is not None:
+                        df_base = df_base[df_base['Year'] == year_selectedB]
+                    
+                    # Identificar qué variables están disponibles en df_base
+                    columnas_necesarias = [var_selected, var_selectedB]
+                    columnas_faltantes = [col for col in columnas_necesarias if col not in df_base.columns]
+                    
+                    if columnas_faltantes:
+                        st.error(f"❌ Columnas no encontradas: {', '.join(columnas_faltantes)}")
+                    else:
+                        df_comun = df_base.dropna(subset=columnas_necesarias)
+                        tamaño_muestra = len(df_comun)
 
-                        st.markdown(f"#### ${(prob):.2f}$")
-                        st.caption(f"Muestra común: {tamaño_muestra} países (donde existen ambos registros).")
+                        if tamaño_muestra == 0:
+                            st.error("No hay registros que tengan datos para ambas variables simultáneamente.")
+                        else:
+                            mascara_A = filtro_df_operacion(df_comun, var_selected, operadorA, val_a)
+                            mascara_B = filtro_df_operacion(df_comun, var_selectedB, operadorB, val_b)
+
+                            if '∪' in op_Conjunto:
+                                mascara_final = mascara_A | mascara_B
+                                condicional_bool = False
+                            elif '∩' in op_Conjunto:
+                                mascara_final = mascara_A & mascara_B
+                                condicional_bool = False
+                            else:
+                                mascara_final = mascara_A & mascara_B
+                                condicional_bool = True
+
+                            if not condicional_bool:
+                                casos = mascara_final.sum()
+                                prob = (casos / tamaño_muestra) * 100
+                            else:
+                                casos_inter = mascara_final.sum()
+                                casos_B = mascara_B.sum()
+                                if casos_B == 0:
+                                    st.error("No se puede calcular P(A|B) porque el evento B nunca ocurre en esta muestra.")
+                                    prob = 0.0
+                                else: 
+                                    #CALCULO DE LA PROBABILIDAD CONDICIONAL
+                                    prob = (casos_inter / casos_B) * 100
+
+                            st.markdown(f"#### ${(prob):.2f}$%")
+                            # st.caption(f"Muestra común: {tamaño_muestra} países (donde existen ambos registros).")
 
 
             titulo_P.markdown(f"#### $P(A{op_Conjunto}B):$", text_alignment= 'center')
