@@ -21,11 +21,26 @@ class Analizador_Estadistico:
         q1 = datos.quantile(0.25)
         q3 = datos.quantile(0.75)
         iqr = q3- q1
+        
+        # Calcular moda: si es 0, obtener el siguiente valor distinto de 0 más frecuente
+        valor_counts = datos.value_counts()
+        moda = np.nan
+        
+        if len(valor_counts) > 0:
+            # Iterar sobre los valores ordenados por frecuencia
+            for valor in valor_counts.index:
+                if valor != 0:
+                    moda = valor
+                    break
+            # Si todos los valores son 0, usar la moda original
+            if np.isnan(moda):
+                moda = valor_counts.index[0]
 
         resumen = {
             "n": len(datos),
             "media": datos.mean(),
             "mediana": datos.median(),
+            "moda": moda,
             "var": datos.var(),
             "std": datos.std(),
             "cv": datos.std() / datos.mean() if datos.mean() != 0 else 0,
@@ -59,10 +74,11 @@ class Analizador_Estadistico:
         Tendencia Central:
         - Media:        {stats_dict['media']:,.2f}
         - Mediana:      {stats_dict['mediana']:,.2f}
+        - Moda:         {stats_dict['moda']:,.2f}
 
         Dispersión:
-        - Varianza:     {stats_dict['var']:,.2f}
-        - Desv. Std:    {stats_dict['std']:,.2f}
+        - Varianza:     {stats_dict['var']:,.4f}
+        - Desv. Std:    {stats_dict['std']:,.4f}
         - CV:           {stats_dict['cv']:,.2f}
 
         Analisis de los Cuantiles:

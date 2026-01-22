@@ -243,7 +243,7 @@ if __name__ == '__main__':
                         color= 'Region',
                         color_discrete_map= COLORES_REGIONES
                     )
-                
+
                 fig.update_layout(
                     xaxis_title= f'{titulo_eje} ({cfg.get('suffix', '')})',
                     legend_title= 'Región',
