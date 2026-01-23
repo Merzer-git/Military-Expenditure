@@ -4,7 +4,7 @@ import pandas as pd
 from src.clase_analizador import Analizador_Estadistico
 from src.datos import cargar_datos
 
-st.set_page_config(page_title="Analisis de Variables", page_icon="📊")
+st.set_page_config(page_title="Analisis de Variables", page_icon="📊", layout= 'wide')
 
 st.sidebar.header("Análisis de Variables")
 st.sidebar.markdown("""
