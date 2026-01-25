@@ -1,3 +1,4 @@
+from turtle import width
 import streamlit as st
 import plotly.express as px
 import pandas as pd
@@ -446,13 +447,27 @@ if __name__ == '__main__':
             st.plotly_chart(fig_bar, use_container_width= True)
 
     with tab_eras:    #LINEA DE TIEMPO
+        #{"Año": 1949, "Evento": "Inicio Guerra Fría", "Detalle": "Creación de la OTAN / Bomba soviética", "Nivel": 1}
         data_hitos = [
-    {"Año": 1949, "Evento": "Inicio Guerra Fría", "Detalle": "Creación de la OTAN / Bomba soviética", "Nivel": 1},
-    {"Año": 1962, "Evento": "Crisis Misiles", "Detalle": "Punto máximo de tensión nuclear", "Nivel": 2},
-    {"Año": 1991, "Evento": "Caída URSS", "Detalle": "Fin de la Guerra Fría", "Nivel": 1},
-    {"Año": 2001, "Evento": "11-S", "Detalle": "Inicio Guerra contra el Terror", "Nivel": 2},
-    {"Año": 2014, "Evento": "Crimea", "Detalle": "Retorno a conflictos estatales", "Nivel": 1},
-    {"Año": 2022, "Evento": "Ucrania", "Detalle": "Invasión a gran escala", "Nivel": 2},
+    {'Año': 1950, 'Evento': 'Guerra de Corea', 'Detalle': 'Primera "guerra caliente" de la Guerra Fría entre el bloque comunista y fuerzas de la ONU/EE.UU.', 'Nivel':0.5},
+    {'Año': 1956, 'Evento': 'Revolución Húngara', 'Detalle': 'Levantamiento popular contra el gobierno estalinista, sofocado brutalmente por tanques soviéticos.', 'Nivel': 0.3},
+    {'Año': 1961, 'Evento': 'Muro de Berlín', 'Detalle': 'Construcción del símbolo físico de la división bipolar para frenar el éxodo hacia Occidente.', 'Nivel': 1},
+    {'Año': 1962, 'Evento': 'Crisis de los Misiles', 'Detalle': 'Punto máximo de tensión nuclear tras el descubrimiento de bases soviéticas en Cuba.', 'Nivel': 2.8},
+    {'Año': 1964, 'Evento': 'Golfo de Tonkín', 'Detalle': 'Incidente naval que sirvió de detonante para la intervención masiva de EE.UU. en Vietnam.', 'Nivel': 1.2},
+    {'Año': 1968, 'Evento': 'Invasión a Checoslovaquia', 'Detalle': 'Tropas del Pacto de Varsovia ponen fin a la "Primavera de Praga" y las reformas liberalizadoras.', 'Nivel': 0.4},
+    {'Año': 1979, 'Evento': 'Invasión a Afganistán', 'Detalle': 'Intervención soviética que inició una guerra de desgaste de 10 años contra insurgentes apoyados por EE.UU.', 'Nivel': 1},
+    {'Año': 1983, 'Evento': 'Crisis de Euromisiles', 'Detalle': 'Escalada de tensión por el despliegue de misiles nucleares de rango intermedio en Europa (Pershing II/SS-20).', 'Nivel': 1.5},
+    {'Año': 1988, 'Evento': 'Glasnost y Perestroika', 'Detalle': 'Reformas de apertura política y económica de Gorbachov que aceleraron el colapso del bloque soviético.', 'Nivel': 2.2},
+    {'Año': 1991, 'Evento': 'Caída de la URSS', 'Detalle': 'Disolución oficial de la Unión Soviética, marcando el fin de la Guerra Fría y la bipolaridad.', 'Nivel': 3},
+    {'Año': 2001, 'Evento': 'Atentados del 11-S', 'Detalle': 'Ataques terroristas en EE.UU. que desencadenaron la "Guerra contra el Terror" y la invasión de Afganistán.', 'Nivel': 2.8},
+    {'Año': 2003, 'Evento': 'Invasión a Irak', 'Detalle': 'Coalición liderada por EE.UU. derroca a Saddam Hussein bajo la premisa de armas de destrucción masiva.', 'Nivel': 1.2},
+    {'Año': 2008, 'Evento': 'Crisis Financiera Global', 'Detalle': 'Recesión económica mundial que forzó recortes significativos en los presupuestos de defensa occidentales.', 'Nivel': 0.5},
+    {'Año': 2014, 'Evento': 'Anexión de Crimea', 'Detalle': 'Rusia toma control de la península ucraniana, marcando el retorno de la tensión militar en Europa.', 'Nivel': 2.8},
+    {'Año': 2015, 'Evento': 'Atentados en París', 'Detalle': 'Ataques del ISIS en Europa que impulsaron un aumento en seguridad interna y operaciones en Siria.', 'Nivel': 1.6},
+    {'Año': 2015, 'Evento': 'Guerra en Yemen', 'Detalle': 'Intervención de la coalición liderada por Arabia Saudita, disparando el gasto militar en Medio Oriente.', 'Nivel': 0.6},
+    {'Año': 2020, 'Evento': 'Pandemia COVID-19', 'Detalle': 'Crisis sanitaria global que desvió recursos y requirió apoyo logístico de las fuerzas armadas.', 'Nivel': 0.4},
+    {'Año': 2022, 'Evento': 'Guerra en Ucrania', 'Detalle': 'Invasión rusa a gran escala, provocando el mayor rearme de la OTAN desde la Guerra Fría.', 'Nivel': 2.5},
+    {'Año': 2023, 'Evento': 'Guerra en Gaza', 'Detalle': 'Escalada del conflicto israelí-palestino con alto impacto en la seguridad regional de Medio Oriente.', 'Nivel': 1.4}
 ]
 
         # Definimos las franjas de fondo (Las Eras)
@@ -473,7 +488,12 @@ if __name__ == '__main__':
                 x0=inicio, x1=fin,
                 fillcolor=color, opacity=0.15,
                 layer="below", line_width=0,
-                annotation_text=nombre, annotation_position="top left"
+                annotation_text=nombre, annotation_position="top left",
+                annotation_font= dict(
+                    size=13,
+                    color='#1a1a1a',
+                    family= 'Arial'
+                )
             )
 
         # B. Añadimos los "Lollipops" (Líneas verticales y puntos)
@@ -498,7 +518,12 @@ if __name__ == '__main__':
             mode="markers+text",
             text=textos,
             textposition="top center",
-            marker=dict(size=12, color="#333"),
+            textfont= dict(size=11, color= '#1a1a1a', family= 'Arial'),
+            marker=dict(
+                size=10,
+                color="#2c3e50",
+                line= dict(width=2, color= 'white')
+            ),
             hovertext=detalles, # Lo que sale al pasar el mouse
             hoverinfo="text+x",
             name="Hitos"
@@ -508,8 +533,8 @@ if __name__ == '__main__':
         fig_timeline.update_layout(
             title="Cronología Geopolítica del Gasto Militar",
             xaxis=dict(range=[1945, 2029], showgrid=False), # Un poco de margen
-            yaxis=dict(showgrid=False, showticklabels=False, range=[0, 3]), # Ocultamos eje Y
-            height=300,
+            yaxis=dict(showgrid=False, showticklabels=False, range=[0, 3.5]), # Ocultamos eje Y
+            height=600,
             plot_bgcolor="white",
             showlegend=False,
             margin=dict(l=20, r=20, t=40, b=20)
