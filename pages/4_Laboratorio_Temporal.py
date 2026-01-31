@@ -3,7 +3,10 @@ import plotly.express as px
 import pandas as pd
 from src.datos import cargar_datos
 
-st.set_page_config(page_title= "Análisis Temporal", page_icon="🕚", layout= 'wide')
+st.set_page_config(page_title= "Análisis Temporal", page_icon='static/sand-clock-half-icon.svg', layout= 'wide')
+st.logo('static/sand-clock-half-icon.svg', icon_image='static/sand-clock-half-icon.svg')
+
+
 st.sidebar.header("Análisis Temporal")
 st.sidebar.markdown("""
     <style>

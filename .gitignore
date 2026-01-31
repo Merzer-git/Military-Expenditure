@@ -1,0 +1,34 @@
+# --- Python y Entornos Virtuales (¡CRÍTICO!) ---
+__pycache__/
+*.pyc
+venv/
+.venv/
+env/
+.env
+
+# --- IDEs y Configuración Local ---
+.vscode/
+.idea/
+.DS_Store
+
+# --- Streamlit ---
+# Ignora las claves secretas (API keys), pero DEJA el config.toml
+.streamlit/secrets.toml
+
+# --- Notebooks y Zona de Pruebas (Tu pedido) ---
+.ipynb_checkpoints/
+*.ipynb
+# O si tienes una carpeta específica para tus pruebas:
+notebooks/
+borradores/
+laboratorio/
+
+# --- Datos (Opcional) ---
+# Si tu CSV es muy pesado (>100MB) GitHub lo rechazará.
+# Si es pequeño y necesario para la app, NO lo descomentes.
+# data/
+# *.csv
+# *.xlsx
+
+# --- README.md (Temporal) ---
+README.md

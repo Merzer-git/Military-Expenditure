@@ -5,7 +5,7 @@ import base64
 
 st.set_page_config(
     page_title= "Global Defense Monitor",
-    page_icon= "🌎",
+    page_icon= 'static/earth.png',
     layout= "wide",
     menu_items={
         'Get Help': 'https://github.com/Merzer-git/',
@@ -27,6 +27,18 @@ st.set_page_config(
     }
 )
 
+st.logo('static/home-icon.svg', icon_image='static/home-icon.svg')
+
+
+def titulo_icon(texto, ruta_icono):
+    col_ico, col_txt = st.columns([1, 15], vertical_alignment= 'center')
+
+    with col_ico:
+        st.image(ruta_icono, width=100)
+    with col_txt:
+        st.subheader(texto)
+
+
 # Control de carga con spinner bloqueante
 if 'data_loaded' not in st.session_state:
     st.session_state.data_loaded = False
@@ -40,7 +52,9 @@ if not st.session_state.data_loaded:
 else:
     df = st.session_state.df
 
-st.title("🌎 Global Defense Monitor")
+
+titulo_icon("Global Defense Monitor", 'static/earth.png')
+# st.title("🌎 Global Defense Monitor")
 st.subheader("La Guerra en números: 75 años de Gasto Militar")
 st.markdown("""
     **Este dashboard explora la evolución en el Gasto Militar a nivel global, regional y por países.** Se analizan datos históricos de partidas presupuestarias destinadas a defensa recolectadas por el **SIPRI** (1949 - 2024) complementada con datos del **Banco Mundial** para entender las dinámicas de rearme, hegemonía y los conflictos geopolíticos que moldearon el mundo moderno.

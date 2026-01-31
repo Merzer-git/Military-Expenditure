@@ -3,7 +3,9 @@ import pandas as pd
 import plotly.express as px
 from src.datos import cargar_datos
 
-st.set_page_config(page_title="Panorama Global", page_icon="🌐", layout= 'wide')
+st.set_page_config(page_title="Panorama Global", page_icon="static/globe-icon.svg", layout= 'wide')
+st.logo('static/globe-icon.svg', icon_image='static/globe-icon.svg')
+
 st.sidebar.header("Panorama Global")
 st.sidebar.markdown("""
     <style>

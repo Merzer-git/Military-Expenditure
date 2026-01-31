@@ -1,0 +1,19 @@
+[theme]
+base = "light"
+primaryColor = "#3F88C5" 
+backgroundColor = "#FFFFFF"
+secondaryBackgroundColor = "#E8ECF2" 
+textColor = "#262730"
+
+# TIPOGRAFÍA
+font = "sans serif"
+
+[client]
+# Oculta el menú de opciones (hamburguesa) para que parezca una app nativa
+toolbarMode = "viewer"
+# Oculta los detalles técnicos de errores si algo falla (más limpio para el usuario final)
+showErrorDetails = false
+
+[server]
+# Aumentamos el límite de subida por si decides permitir cargar datasets grandes
+maxUploadSize = 500

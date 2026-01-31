@@ -3,7 +3,9 @@ import pandas as pd
 import numpy as np
 from src.datos import cargar_datos
 
-st.set_page_config(page_title='Calculadora de Probabilidades', page_icon='🎲', layout= 'wide')
+st.set_page_config(page_title='Calculadora de Probabilidades', page_icon='static/dice-game-icon.svg', layout= 'wide')
+st.logo('static/dice-game-icon.svg', icon_image='static/dice-game-icon.svg')
+
 st.sidebar.header('Calculadora de Probabilidad Empírica')
 st.sidebar.markdown("""
     <style>

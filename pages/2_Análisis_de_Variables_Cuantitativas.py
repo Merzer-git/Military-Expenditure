@@ -4,7 +4,8 @@ import pandas as pd
 from src.clase_analizador import Analizador_Estadistico
 from src.datos import cargar_datos
 
-st.set_page_config(page_title="Analisis de Variables Cuantitativas", page_icon="📊", layout= 'wide')
+st.set_page_config(page_title="Analisis de Variables Cuantitativas", page_icon='static/column-chart-icon.svg', layout= 'wide')
+st.logo('static/column-chart-icon.svg', icon_image='static/column-chart-icon.svg')
 
 st.sidebar.header("Análisis de Variables Cuantitativas")
 st.sidebar.markdown("""

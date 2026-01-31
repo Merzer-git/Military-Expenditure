@@ -1,15 +1,14 @@
-from turtle import width
 import streamlit as st
 import plotly.express as px
 import pandas as pd
 import json
-from streamlit_timeline import timeline
 from src.datos import cargar_datos
 import base64
 import os
 import plotly.graph_objects as go
 
-st.set_page_config(page_title="Analisis de Variables Cualitativas", page_icon="📊", layout= 'wide')
+st.set_page_config(page_title="Analisis de Variables Cualitativas", page_icon='static/report-icon.svg', layout= 'wide')
+st.logo('static/report-icon.svg', icon_image='static/report-icon.svg')
 
 st.sidebar.header("Análisis de Variables Cualitativas")
 st.sidebar.markdown("""
@@ -22,6 +21,7 @@ st.sidebar.markdown("""
 <p class="small-font">
     Explora que países son parte de la muestra y la definición de las eras que componen este periodo de 75 años.
 </p>""", unsafe_allow_html= True)
+
 
 COLORES_REGIONES = {
     'Europe': '#636EFA',
@@ -282,6 +282,7 @@ def activar_analisis():
     st.session_state.analisis_listo = True
 
 if __name__ == '__main__':
+    
     df = cargar_datos()
 
     with open('./data/world_1960.geojson', 'r', encoding= 'utf-8') as f:
