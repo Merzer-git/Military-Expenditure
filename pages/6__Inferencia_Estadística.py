@@ -137,7 +137,7 @@ if __name__ == '__main__':
 
             fig_intervalos_era.update_layout(
                 title= f'Intervalo de Confianza del Gasto Promedio - {era_seleccionada_ref}',
-                xaxis_title= 'Gasto en Billones de USD',
+                xaxis_title= 'Gasto (en miles de millones de dólares)',
                 height= 300,
                 margin= dict(l=20, r=20, t=20, b=20)
                 )
@@ -156,9 +156,9 @@ if __name__ == '__main__':
                 res_era_mensaje = '❌ No hay diferencia significativa' if res_era_cero else '✅ Hay diferencia significativa'
 
                 cols_b = st.columns(3)
-                cols_b[0].metric('Diferencia Estimada (A - B)', f'${datos_comparacion_era["diferencia"]:.2f} B')
-                cols_b[1].metric('Límite Inferior (95%)', f'${datos_comparacion_era["lim_inf"]:.2f} B')
-                cols_b[2].metric('Límite superior (95%)', f'${datos_comparacion_era["lim_sup"]:.2f} B')
+                cols_b[0].metric('Diferencia Estimada (A - B)', f'${datos_comparacion_era["diferencia"]:.2f}', help= 'En miles de millones de dólares')
+                cols_b[1].metric('Límite Inferior (95%)', f'${datos_comparacion_era["lim_inf"]:.2f}', help= 'En miles de millones de dólares')
+                cols_b[2].metric('Límite superior (95%)', f'${datos_comparacion_era["lim_sup"]:.2f}', help= 'En miles de millones de dólares')
 
                 fig_diff_era = go.Figure()
                 fig_diff_era.add_trace(go.Scatter(
@@ -181,7 +181,7 @@ if __name__ == '__main__':
 
                 fig_diff_era.update_layout(
                     title= f'Intervalo de la Diferencia ({era_seleccionada_ref} vs {era_seleccionada_comp})',
-                    xaxis_title= 'Diferencia en Billones de USD',
+                    xaxis_title= 'Diferencia (en miles de millones de dólares)',
                     height= 300,
                     margin= dict(l=20, r=20, t=20, b=20)
                 )

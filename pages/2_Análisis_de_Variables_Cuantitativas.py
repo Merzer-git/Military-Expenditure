@@ -23,12 +23,12 @@ st.sidebar.markdown("""
 config_metrics = {
     "Spending_B":{
         "label": "Gasto Militar",
-        "suffix": " USD (B)",
-        "desc_media": "Promedio Global",
-        "desc_mediana": "Valor Típico",
-        "desc_desvio": "Desvio Estandar",
+        "suffix": " USD",
+        "desc_media": "Promedio Global (en miles de millones de dólares)",
+        "desc_mediana": "Valor Típico (en miles de millones de dólares)",
+        "desc_desvio": "Desvio Estandar (en miles de millones de dólares)",
         "desc_cv": "Coeficiente de Variación",
-        "desc_top1": "Top 1% (C99)",
+        "desc_top1": "Top 1% (C99) (en miles de millones de dólares)",
         "desc_skew": "Asimetría",
         "desc_kurt": "Kurtosis"
     },
@@ -259,7 +259,12 @@ if __name__ == '__main__':
                 st.plotly_chart(fig, use_container_width= True)
 
                 max_pais = df_plot.loc[df_plot[var_selected].idxmax()]
-                st.info(f'**Máximo**: {max_pais['Country']} con {max_pais[var_selected]:,.2f}{cfg['suffix']}')
+
+                if var_selected == 'Spending_B':
+                    st.info(f'**Máximo**: {max_pais['Country']} con {max_pais[var_selected]:,.2f}{cfg['suffix']} (en miles de millones de dólares)')
+                else:
+                    st.info(f'**Máximo**: {max_pais['Country']} con {max_pais[var_selected]:,.2f}{cfg['suffix']}')
+
 
 
 

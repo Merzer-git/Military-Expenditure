@@ -7,7 +7,7 @@ st.set_page_config(page_title= "Análisis Temporal", page_icon='static/sand-cloc
 st.logo('static/sand-clock-half-icon.svg', icon_image='static/sand-clock-half-icon.svg')
 
 
-st.sidebar.header("Análisis Temporal")
+st.sidebar.header("Laboratorio Temporal")
 st.sidebar.markdown("""
     <style>
 .small-font {
@@ -97,7 +97,7 @@ eventos_importantes= {
     "Crisis Euromisiles (1983)": 1983,
 
     #EVENTOS TRANsIcION (PRE A POST GUERRA FRIA)
-    'Glasnost (1985)': 1985,
+    'Glasnost (1987) - Mayor acceso de Registros Públicos': 1987,
     'Disolución de la URSS (1991)': 1991,
 
     #EVENTOS POST GUERRA FRIA
@@ -179,7 +179,7 @@ if __name__ == '__main__':
             y= 'Spending_B',
             color= 'Bloque',
             color_discrete_map= color_bloque,
-            labels= {'Spending_B': 'Gasto (Billones USD)', 'Year': 'Año'},
+            labels= {'Spending_B': 'Gasto (en miles de millones de dólares)', 'Year': 'Año'},
             title= 'Evolución de Gasto por Bloque'
         )
 
@@ -201,7 +201,7 @@ if __name__ == '__main__':
     with tab_2:
         df_fase2 = df[
             (df['Country'].isin(['United States of America', 'USSR'])) &
-            (df['Year'] >= 1985) & (df['Year'] <= 1991)
+            (df['Year'] >= 1987) & (df['Year'] <= 1991)
         ]
 
         df_evolucion_fase2 = df_fase2.groupby(['Year', 'Country'])['Spending_B'].sum().reset_index()
@@ -209,7 +209,7 @@ if __name__ == '__main__':
         with st.expander("📌 Agrega eventos al gráfico", expanded= False):
             eventos_seleccionados= st.multiselect(
                 'Selecciona eventos',
-                options= ['Glasnost (1985)', 'Disolución de la URSS (1991)']
+                options= ['Glasnost (1987) - Mayor acceso de Registros Públicos', 'Disolución de la URSS (1991)']
             )
 
         fig_fase2= px.line(
@@ -218,7 +218,7 @@ if __name__ == '__main__':
             y='Spending_B',
             color= 'Country',
             color_discrete_map= color_bloque,
-            labels= {'Spenfing_B': 'Gasto (Billones USD)', 'Year': 'Año'},
+            labels= {'Spending_B': 'Gasto (en miles de millones de dólares)', 'Year': 'Año'},
             title= 'Evolución del Gasto: EE.UU vs. URSS'
         )
 
@@ -234,7 +234,7 @@ if __name__ == '__main__':
                 annotation_position= 'top left',
                 annotation_textangle= -90 
             )
-
+        fig_fase2.update_xaxes(tickformat= "d", dtick= 1)
         st.plotly_chart(fig_fase2, use_container_width= True)
 
     with tab_3:
@@ -256,7 +256,7 @@ if __name__ == '__main__':
             y= 'Spending_B',
             color= 'Country',
             color_discrete_map= color_bloque,
-            labels= {'Spending_B': 'Gasto (Billones USD)', 'Year': 'Año'},
+            labels= {'Spending_B': 'Gasto (en miles de millones de dólares)', 'Year': 'Año'},
             title= 'Evolución del Gasto de las Potencias Modernas'
         )
 
@@ -273,6 +273,7 @@ if __name__ == '__main__':
                 annotation_textangle= -90
             )
 
+        fig_fase3.update_xaxes(dtick= 1)
         st.plotly_chart(fig_fase3, use_container_width= True)
 
 st.markdown("""

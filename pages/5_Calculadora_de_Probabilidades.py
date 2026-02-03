@@ -160,7 +160,7 @@ if __name__ == '__main__':
         tipo_evento = st.radio(
             'Seleccione el tipo de evento a calcular',
             ['Evento Simple', 'Evento Compuesto'],
-            index= None,
+            index= 0,
             horizontal= True
         )
 

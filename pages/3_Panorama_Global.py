@@ -59,7 +59,7 @@ if __name__ == '__main__':
             y= 'Spending_B',
             color= 'Region',
             title= 'Evolución del Gasto Militar por Region',
-            labels= {'Spending_B': 'Gasto (Billones USD)'},
+            labels= {'Spending_B': 'Gasto (en miles de millones de dólares)'},
             color_discrete_map=COLORES_REGIONES
         )
         st.plotly_chart(fig_area, use_container_width= True)
@@ -117,7 +117,7 @@ if __name__ == '__main__':
             df_eras,
             x= 'Historical_Era',
             y= 'Spending_B',
-            labels= {'Spending_B': 'Gasto (Billones USD)', 'Historical_Era': 'Periodo Histórico'},
+            labels= {'Spending_B': 'Gasto (en miles de millones de dólares)', 'Historical_Era': 'Periodo Histórico'},
             color= 'Historical_Era',
             color_discrete_map= PALETA_ERAS,
             text_auto= '.2s',
