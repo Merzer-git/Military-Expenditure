@@ -318,11 +318,6 @@ if __name__ == '__main__':
     * **Veredicto:** {res_region_mensaje}.
     """)
 
-            
-            
-
-
-
 #REDUCCION DEL HEADER Y EL FOOTER
 st.markdown("""
     <style>
