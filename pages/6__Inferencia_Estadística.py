@@ -39,13 +39,15 @@ COLORES_REGIONES = {
 #CALCULO DEL INTERVALO DE CONFIANZA PARA UNA ERA SELECCIONADA
 def IC_media (datos, confianza= 0.95):
     n = len(datos)
+    
+    #ESTIMADORES DE LA MEDIA Y DE LA VARIANZA MUESTRAL
     media= np.mean(datos)
     desvio_s = np.std(datos, ddof=1)    #-> con ddof=1 se trabaja la varianza muestral (n-1)
 
     #A VARIANZA DESCONOCIDA SE TRABAJA CON LA T DE STUDENT
     intervalo = stat.t.interval(confianza, df= n-1, loc=media, scale= desvio_s/np.sqrt(n))
 
-    return media, intervalo
+    return media, desvio_s**2, intervalo
 
 def comparar_poblaciones(datos_a, datos_b, confianza= 0.95):
     n1, n2 = len(datos_a), len(datos_b)
@@ -81,6 +83,8 @@ def comparar_poblaciones(datos_a, datos_b, confianza= 0.95):
         'n1': n1,
         'n2': n2,
         'diferencia': diff_medias,
+        'var_a': var_a,
+        'var_b': var_b,
         'margen': margen_error,
         'lim_inf': diff_medias - margen_error,
         'lim_sup': diff_medias + margen_error,
@@ -101,7 +105,7 @@ if __name__ == '__main__':
         cols_var = st.columns(2)
         with cols_var[0]:
             era_seleccionada_ref = st.selectbox(
-                'Seleccione una Era (Referencia)',
+                'Seleccione una Era (A)',
                 options_eras,
                 index= None
             )
@@ -109,20 +113,21 @@ if __name__ == '__main__':
         with cols_var[1]:
             era_filtrada = [op for op in options_eras if op != era_seleccionada_ref]
             era_seleccionada_comp = st.selectbox(
-                'Seleccione una Era (Comparación)',
+                'Seleccione una Era (B)',
                 era_filtrada,
                 index= None,
                 disabled= (era_seleccionada_ref is None)
             )
 
         df_era_a = df[df['Historical_Era'] == era_seleccionada_ref]['Spending_B'].dropna()
-        media_estimada_era_a, (lim_inf_era_a, lim_sup_era_a) = IC_media(df_era_a)
+        media_estimada_era_a, varianza_muestral_era_a, (lim_inf_era_a, lim_sup_era_a) = IC_media(df_era_a)
 
         if era_seleccionada_ref is not None and era_seleccionada_comp is None:
-            cols_era_a= st.columns(3)
-            cols_era_a[0].metric('Media Muestral', f'${media_estimada_era_a:.2f} B')
-            cols_era_a[1].metric('Límite Inferior (95%)', f'${lim_inf_era_a:.2f} B')
-            cols_era_a[2].metric('Límite Superior (95%)', f'${lim_sup_era_a:.2f} B')
+            cols_era_a= st.columns(4)
+            cols_era_a[0].metric(r'Media Muestral ($\bar{X}_A$)', f'${media_estimada_era_a:.2f} B')
+            cols_era_a[1].metric('Varianza Muestral ($S^2_A$)', f'{varianza_muestral_era_a:.2f}')
+            cols_era_a[2].metric('Límite Inferior (95%)', f'${lim_inf_era_a:.2f} B')
+            cols_era_a[3].metric('Límite Superior (95%)', f'${lim_sup_era_a:.2f} B')
 
             color_era_actual = eras_color.get(era_seleccionada_ref, 'gray')
             fig_intervalos_era = go.Figure()
@@ -147,7 +152,7 @@ if __name__ == '__main__':
                 st.info('ℹ️ Eliga una era como referencia.')
             else:
                 df_era_b = df[df['Historical_Era'] == era_seleccionada_comp]['Spending_B'].dropna()
-                media_estimada_era_b, (lim_inf_era_b, lim_sup_era_b) = IC_media(df_era_b)
+                media_estimada_era_b, varianza_muestral_era_b, (lim_inf_era_b, lim_sup_era_b) = IC_media(df_era_b)
                 
                 datos_comparacion_era = comparar_poblaciones(df_era_a, df_era_b)
 
@@ -155,10 +160,12 @@ if __name__ == '__main__':
                 res_era_color = 'red' if res_era_cero else 'green'
                 res_era_mensaje = '❌ No hay diferencia significativa' if res_era_cero else '✅ Hay diferencia significativa'
 
-                cols_b = st.columns(3)
-                cols_b[0].metric('Diferencia Estimada (A - B)', f'${datos_comparacion_era["diferencia"]:.2f}', help= 'En miles de millones de dólares')
-                cols_b[1].metric('Límite Inferior (95%)', f'${datos_comparacion_era["lim_inf"]:.2f}', help= 'En miles de millones de dólares')
-                cols_b[2].metric('Límite superior (95%)', f'${datos_comparacion_era["lim_sup"]:.2f}', help= 'En miles de millones de dólares')
+                cols_b = st.columns(5)
+                cols_b[0].metric(r'Diferencia Estimada ($\bar{X}_A - \bar{X}_B$)', f'${datos_comparacion_era["diferencia"]:.2f}', help= 'En miles de millones de dólares')
+                cols_b[1].metric('Varianza Muestral ($S^2_A$)', f'{datos_comparacion_era["var_a"]:.2f}')
+                cols_b[2].metric('Varianza Muestral ($S^2_B$)', f'{datos_comparacion_era["var_b"]:.2f}')
+                cols_b[3].metric('Límite Inferior (95%)', f'${datos_comparacion_era["lim_inf"]:.2f}', help= 'En miles de millones de dólares')
+                cols_b[4].metric('Límite superior (95%)', f'${datos_comparacion_era["lim_sup"]:.2f}', help= 'En miles de millones de dólares')
 
                 fig_diff_era = go.Figure()
                 fig_diff_era.add_trace(go.Scatter(
@@ -203,7 +210,7 @@ if __name__ == '__main__':
         cols = st.columns(2)
         with cols[0]:
             region_seleccionada_ref = st.selectbox(
-                'Seleccione un Región (Referencia)',
+                'Seleccione un Región (A)',
                 options_region,
                 index= None
             )
@@ -212,20 +219,21 @@ if __name__ == '__main__':
 
         with cols[1]:
             region_seleccionada_comp = st.selectbox(
-                'Seleccione una Región (Comparación)',
+                'Seleccione una Región (B)',
                 region_filtrada,
                 index= None,
                 disabled= (region_seleccionada_ref is None)
             )
 
         df_region_a = df[df['Region'] == region_seleccionada_ref]['Share_of_GDP'].dropna()
-        media_estimada_region_a, (lim_inf_region_a, lim_sup_region_a) = IC_media(df_region_a)
+        media_estimada_region_a, varianza_muestral_region_a, (lim_inf_region_a, lim_sup_region_a) = IC_media(df_region_a)
 
         if region_seleccionada_ref is not None and region_seleccionada_comp is None:
-            cols_region_a = st.columns(3)
-            cols_region_a[0].metric('Media Muestral', f'{media_estimada_region_a*100:.2f}%')
-            cols_region_a[1].metric('Límite Inferior (95%)', f'{lim_inf_region_a*100:.2f}%')
-            cols_region_a[2].metric('Límite Superior (95%)', f'{lim_sup_region_a*100:.2f}%')
+            cols_region_a = st.columns(4)
+            cols_region_a[0].metric(r'Media Muestral ($\bar{X}_A$)', f'{media_estimada_region_a*100:.2f}%')
+            cols_region_a[1].metric('Varianza Muestral ($S^2_A$)', f'{varianza_muestral_region_a*100:.2f}')
+            cols_region_a[2].metric('Límite Inferior (95%)', f'{lim_inf_region_a*100:.2f}%')
+            cols_region_a[3].metric('Límite Superior (95%)', f'{lim_sup_region_a*100:.2f}%')
 
             color_region_actual = COLORES_REGIONES.get(region_seleccionada_ref, 'gray')
             fig_intervalos_region = go.Figure()
@@ -265,7 +273,7 @@ if __name__ == '__main__':
                 st.info('ℹ️ Eliga una región como referencia.')
             else:
                 df_region_b = df[df['Region'] == region_seleccionada_comp]['Share_of_GDP'].dropna()
-                media_estimada_region_b, (lim_inf_era_b, lim_sup_era_b) = IC_media(df_region_b)
+                media_estimada_region_b, varianza_muestral_region_b, (lim_inf_era_b, lim_sup_era_b) = IC_media(df_region_b)
                 
                 datos_comparacion_region = comparar_poblaciones(df_region_a, df_region_b)
 
@@ -273,10 +281,12 @@ if __name__ == '__main__':
                 res_region_color = 'red' if res_region_cero else 'green'
                 res_region_mensaje = '❌ No hay diferencia significativa' if res_region_cero else '✅ Hay diferencia significativa'
 
-                cols_b = st.columns(3)
-                cols_b[0].metric('Diferencia Estimada (A - B)', f'{datos_comparacion_region["diferencia"]*100:.2f}%')
-                cols_b[1].metric('Límite Inferior (95%)', f'{datos_comparacion_region["lim_inf"]*100:.2f}%')
-                cols_b[2].metric('Límite superior (95%)', f'{datos_comparacion_region["lim_sup"]*100:.2f}%')
+                cols_b = st.columns(5)
+                cols_b[0].metric(r'Diferencia Estimada ($\bar{X}_A - \bar{X}_B$)', f'{datos_comparacion_region["diferencia"]*100:.2f}%')
+                cols_b[1].metric('Varianza Muestral ($S^2_A$)', f'{datos_comparacion_region["var_a"]*100:.2f}')
+                cols_b[2].metric('Varianza Muestral ($S^2_B$)', f'{datos_comparacion_region["var_b"]*100:.2f}')
+                cols_b[3].metric('Límite Inferior (95%)', f'{datos_comparacion_region["lim_inf"]*100:.2f}%')
+                cols_b[4].metric('Límite superior (95%)', f'{datos_comparacion_region["lim_sup"]*100:.2f}%')
 
                 fig_diff_region = go.Figure()
                 fig_diff_region.add_trace(go.Scatter(

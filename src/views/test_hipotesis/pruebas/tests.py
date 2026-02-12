@@ -35,3 +35,10 @@ def kolmogorov_smirnov(data, distribucion):
         'parametros': parametros,
         'dist_scipy': scipy_dist_name
     }
+    
+def chi_cuadrado(tabla):
+    """Recibe un DF que representa la Tabla de Contigencia (CrossTab). Calcula el estadístico Chi2, p-valor, grados de libertad y frecuencias esperadas."""
+    
+    resultado = chi2_contingency(tabla)
+    
+    return resultado

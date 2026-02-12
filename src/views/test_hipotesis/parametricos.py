@@ -3,7 +3,7 @@ from statsmodels.stats.weightstats import ztest
 from scipy import stats
 from src.views.test_hipotesis.utils import plot_region_critica
 
-var_options = ['Spending_B', 'Growth_Rate', 'Per_Capita', 'Share_of_GDP', 'Share_of_Govt_Spending', 'Region']
+var_options = ['Spending_B', 'Growth_Rate', 'Per_Capita', 'Share_of_GDP', 'Share_of_Govt_Spending']
 
 var_porcentuales = ['Share_of_GDP', 'Share_of_Govt_Spending', 'Growth_Rate']
 

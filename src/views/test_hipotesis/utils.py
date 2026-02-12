@@ -2,6 +2,8 @@ import numpy as np
 import plotly.graph_objects as go
 from scipy.stats import t, norm
 from scipy import stats
+import plotly.express as px
+import pandas as pd
 
 def plot_region_critica(estadistico, alpha, tipo_h1, n=None):
     """
@@ -152,6 +154,33 @@ def plot_bondad_ajuste(datos, dist_nombre, params):
         template= 'plotly_white',
         bargap= 0.05,
         legend= dict(yanchor= 'top', y= 0.99, xanchor= 'right', x= 0.99)
+    )
+    
+    return fig
+    
+def mapa_calor(tabla, max_valor_escala):
+    fig = px.imshow(
+        tabla,
+        text_auto = True,
+        aspect= 'auto',
+        color_continuous_scale= 'Blues',
+        title= 'Mapa de Calor de Frecuencias',
+        range_color= [0, max_valor_escala]
+    )
+    return fig
+    
+def barras_apiladas(tabla):
+    df = tabla.reset_index()
+    df_melt = df.melt(id_vars= df.columns[0], var_name= 'Categoría', value_name= 'Cantidad')
+    
+    fig = px.bar(
+        df_melt,
+        x= df.columns[0],
+        y= 'Cantidad',
+        color= 'Categoría',
+        barmode= 'group',
+        text_auto= True,
+        title= 'Distribución Comparativa'
     )
     
     return fig
