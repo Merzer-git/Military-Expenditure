@@ -67,22 +67,34 @@ if __name__ == '__main__':
         cols_jerarquia = ['Region', 'Subregion', 'Country']
 
     with tab_2:
-        year_selected = st.slider(
-            "Año de Análisis",
-            min_value= int(df['Year'].min()),
-            max_value= int(df['Year'].max()),
-            value= 2024)
+        col_poder = st.columns([3,1])
+        
+        with col_poder[0]:
+            year_selected = st.slider(
+                "Año de Análisis",
+                min_value= int(df['Year'].min()),
+                max_value= int(df['Year'].max()),
+                value= 2024)
+            
         df_year= df_filtrado[df_filtrado['Year'] == year_selected].copy()
         for col in cols_jerarquia:
             df_year[col] = df_year[col].fillna('Desconocido')
         
         df_year['Subregion'] = df_year['Subregion'].fillna(df_year['Region'])
 
-        metrica_treemap = st.radio(
-            "El tamaño representa: ",
-            ['Gasto Total (Spending_B)', 'Esfuerzo Económico (Share_of_GDP)'],
-            horizontal= True
-        )
+        with col_poder[1]:
+            # metrica_treemap = st.radio(
+            #     "El tamaño representa: ",
+            #     ['Gasto Total (Spending_B)', 'Esfuerzo Económico (Share_of_GDP)'],
+            #     horizontal= True
+            # )
+            metrica_treemap = st.pills(
+                'Variable a evaluar',
+                options= ['Gasto Total', 'Esfuerzo Económico'],
+                default= 'Gasto Total',
+                selection_mode= 'single'
+            )
+
 
         variable_valor = 'Spending_B' if 'Gasto' in metrica_treemap else 'Share_of_GDP'
         if variable_valor == 'Share_of_GDP':

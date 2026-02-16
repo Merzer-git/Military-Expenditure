@@ -3,8 +3,8 @@ from src.datos import cargar_datos
 from src.views.test_hipotesis.parametricos import render_parametrico
 from src.views.test_hipotesis.no_parametricos import render_no_parametrico
 
-st.set_page_config(page_title= 'Test de Hipótesis', layout='wide')
-
+st.set_page_config(page_title= 'Test de Hipótesis', page_icon='static/microscope-icon.svg', layout='wide')
+st.logo('static/microscope-icon.svg', icon_image='static/microscope-icon.svg')
 st.sidebar.subheader('Test de Hipótesis')
 st.sidebar.markdown("""
     <style>
@@ -14,7 +14,7 @@ st.sidebar.markdown("""
 }
 </style>
 <p class="small-font">
-    Evalua las principales pruebas paramétricas y no paramétricas sobre las variables de interés.
+    Evalua las principales pruebas paramétricas y no paramétricas sobre las principales variables de interés del estudio.
 </p>""", unsafe_allow_html= True)
 
 #REDUCCION DEL HEADER Y EL FOOTER

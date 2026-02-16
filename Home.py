@@ -1,5 +1,4 @@
 import streamlit as st
-import pandas as pd
 from src.datos import cargar_datos
 import base64
 
@@ -106,8 +105,8 @@ def get_svg_base64(path_to_file):
 sipri_svg_data = get_svg_base64('static/logo.svg')
 
 with st.sidebar:
-    st.caption("Actualizado con datos de 2024")
-    st.markdown("### ℹ️ Enlaces y Fuente")
+    # st.caption("Actualizado con datos de 2024")
+    # st.markdown("### ℹ️ Enlaces y Fuente")
 
     # Badge de GITHUB (Usando shields.io como vimos antes)
     st.markdown(
@@ -143,5 +142,5 @@ with st.sidebar:
         unsafe_allow_html=True
     )
 
-    st.divider()
-    st.caption("Developed by **Brian Alaníz**")
+    # st.divider()
+    st.caption("Developed by **Brian Alaníz**", text_alignment= 'center')

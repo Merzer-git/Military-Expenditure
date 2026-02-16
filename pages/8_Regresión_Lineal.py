@@ -2,7 +2,8 @@ import streamlit as st
 from src.datos import cargar_datos
 from src.views.regresion_lineal.regresion import render_regresion
 
-st.set_page_config(page_title= 'Regresión Lineal', layout= 'wide')
+st.set_page_config(page_title= 'Regresión Lineal', page_icon= 'static/Covariate--Streamline-Carbon.svg', layout= 'wide')
+st.logo('static/Covariate--Streamline-Carbon.svg', icon_image= 'static/Covariate--Streamline-Carbon.svg')
 st.sidebar.subheader('Regresión Lineal')
 st.sidebar.markdown("""
     <style>
@@ -12,7 +13,7 @@ st.sidebar.markdown("""
 }
 </style>
 <p class="small-font">
-    
+    Ejecuta el modelo de Regresion Lineal (OLS) para identificar tendencias y relaciones.
 </p>""", unsafe_allow_html= True)
 #REDUCCION DEL HEADER Y EL FOOTER
 st.markdown("""

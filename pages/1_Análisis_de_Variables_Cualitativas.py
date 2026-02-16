@@ -294,7 +294,7 @@ if __name__ == '__main__':
         tab_mapa, tab_barra = st.tabs(['Mapa de la muestra', 'Países de la muestra por Región'])
 
         with tab_mapa:
-            cols = st.columns([3,1])
+            cols = st.columns([2,1,1])
 
             with cols[0]:
                 selected_year = st.slider(
@@ -379,7 +379,8 @@ if __name__ == '__main__':
                 df_paises['ISO-3'] = df_paises['Country'].map(iso_codes)
                 df_paises = df_paises.dropna(subset=['Spending_B'])
                 n_paises = df_paises['Country'].nunique()
-                st.info(f"En el año **{selected_year}**, el dataset cuenta con datos de **{n_paises}** países.")
+                with cols[2]:
+                    st.info(f"En el año **{selected_year}**, el dataset cuenta con datos de **{n_paises}** países.")
                 
                 fig_mapa = px.choropleth(
                     df_paises,
@@ -404,25 +405,29 @@ if __name__ == '__main__':
                 st.plotly_chart(fig_mapa, use_container_width= True)
 
         with tab_barra:
+            col_barra = st.columns([1,1])
             min_year = int(df['Year'].min())
             max_year = int(df['Year'].max())
-
-            selected_year = st.slider(
-                'Seleccione un año',
-                min_value= min_year,
-                max_value= max_year,
-                value= 2024,
-                step= 1,
-                help= 'Desliza para ver la disponibilidad de datos por año.',
-                key='year_slider_barra'
-            )
+            
+            with col_barra[0]:
+                selected_year = st.slider(
+                    'Seleccione un año',
+                    min_value= min_year,
+                    max_value= max_year,
+                    value= 2024,
+                    step= 1,
+                    help= 'Desliza para ver la disponibilidad de datos por año.',
+                    key='year_slider_barra'
+                )
 
             # Filtrar datos por año seleccionado
             df_year = df[df['Year'] == selected_year].copy()
             # Eliminar países sin datos en Spending_B
             df_year = df_year.dropna(subset=['Spending_B'])
             n_paises = df_year['Country'].nunique()
-            st.info(f"En el año **{selected_year}**, el dataset cuenta con datos de **{n_paises}** países.")
+            
+            with col_barra[1]:
+                st.info(f"En el año **{selected_year}**, el dataset cuenta con datos de **{n_paises}** países.")
 
             # Contar países por región
             conteo_region = df_year['Region'].value_counts().reset_index()

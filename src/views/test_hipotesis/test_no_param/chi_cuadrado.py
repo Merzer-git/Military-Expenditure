@@ -69,7 +69,7 @@ def render_ind_homo(df):
                 format= "%.3f",
                 step= 0.001,
                 label_visibility= 'visible',
-                key= 'significacion',
+                key= 'alpha_ind',
                 help= 'Probabilidad correspodiente a la **Región Crítica** de $H_0$, considerando que la $H_0$ planteada es verdadera: $P(eI)$')
             
             if var_interes is not None:
@@ -129,7 +129,7 @@ def render_ind_homo(df):
                         format= "%.3f",
                         step= 0.001,
                         label_visibility= 'visible',
-                        key= 'significacion',
+                        key= 'alpha_homo',
                         help= 'Probabilidad correspodiente a la **Región Crítica** de $H_0$, considerando que la $H_0$ planteada es verdadera: $P(eI)$')
             
             if var_interes and var_era_A and var_era_B:
@@ -217,5 +217,3 @@ def render_ind_homo(df):
                     fig_barra = barras_apiladas(tabla_obs)
                     
                     st.plotly_chart(fig_barra, use_container_width= True)
-        else:
-            st.info('Configure los parámetros y presione Calcular para visualizar los resultados')

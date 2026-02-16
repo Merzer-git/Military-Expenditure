@@ -80,7 +80,7 @@ def render_bondad_ajuste(df):
             format= "%.3f",
             step= 0.001,
             label_visibility= 'visible',
-            key= 'significacion',
+            key= 'alpha_bondad',
             help= 'Probabilidad correspodiente a la **Región Crítica** de $H_0$, considerando que la $H_0$ planteada es verdadera: $P(eI)$')
 
         if valor_h0 is not None:

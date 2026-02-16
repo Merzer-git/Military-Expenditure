@@ -157,11 +157,11 @@ if __name__ == '__main__':
                 st.warning(f"⚠️ Se descartaron {dif} muestras (Outliers) ya que rompen la distribución de intervalos")
 
     with tab_prob:
-        tipo_evento = st.radio(
+        tipo_evento = st.pills(
             'Seleccione el tipo de evento a calcular',
             ['Evento Simple', 'Evento Compuesto'],
-            index= 0,
-            horizontal= True
+            default= 'Evento Simple',
+            selection_mode= 'single'
         )
 
         if tipo_evento == 'Evento Simple':

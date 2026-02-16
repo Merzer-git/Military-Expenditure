@@ -10,9 +10,12 @@ def render_regresion(df):
     """Lógica completa de la pestaña Regresión Lineal"""
     if 'regresion_calculado' not in st.session_state:
         st.session_state.regresion_calculado = False
-    
     if 'regresion_resultado' not in st.session_state:
         st.session_state.regresion_resultado = None
+    if 'var_X' not in st.session_state:
+        st.session_state.var_X = None
+    if 'var_Y' not in st.session_state:
+        st.session_state.var_Y = None
     
     def reset_regresion():
         st.session_state.regresion_calculado = False
@@ -93,20 +96,24 @@ def render_regresion(df):
                     if len(df_RL) > 5:
                         modelo = regresion_lineal(df_RL, var_selected_X, var_selected_Y)
                         st.session_state.regresion_resultado = modelo
+                        st.session_state.var_X = var_selected_X
+                        st.session_state.var_Y = var_selected_Y
                     else:
                         st.info('No hay datos suficientes en el rango seleccionado para calcular una regresión.')
-            
         else:
             st.info('Ingrese los datos para la ejecución del modelo.')
     
     with col[1]:    #RESULTADOS DE LA REGRESION
-        if st.session_state.regresion_calculado and st.session_state.regresion_resultado is not None:
+        if st.session_state.regresion_calculado and st.session_state.regresion_resultado is not None and st.session_state.get('var_X') is not None:
             modelo = st.session_state.regresion_resultado
             
+            var_x = st.session_state.var_X
+            var_y = st.session_state.var_Y
+            
             intercepto = modelo.params['const']
-            pendiente = modelo.params[var_selected_X]
+            pendiente = modelo.params[var_x]
             r2 = modelo.rsquared
-            p_valor = modelo.pvalues[var_selected_X]
+            p_valor = modelo.pvalues[var_x]
             if p_valor < 0.0001:
                 p_valor_txt = f'{p_valor:.2e}'
             else:
@@ -132,17 +139,15 @@ def render_regresion(df):
                 delta_color= color_delta
             )
             
-            df_plot = df_RL.sort_values(by= var_selected_X).copy()
-            predicciones = modelo.get_prediction(sm.add_constant(df_plot[var_selected_X])).summary_frame(alpha= 0.05)
+            df_plot = df_RL.sort_values(by= var_x).copy()
+            predicciones = modelo.get_prediction(sm.add_constant(df_plot[var_x])).summary_frame(alpha= 0.05)
             df_plot['ci_bajo'] = predicciones['mean_ci_lower']
             df_plot['ci_alto'] = predicciones['mean_ci_upper']
             df_plot['prediccion_media'] = predicciones['mean']
             
-            fig_RL = plot_regresion_lineal(df_plot, var_selected_X, var_selected_Y)
+            fig_RL = plot_regresion_lineal(df_plot, var_x, var_y)
             
             st.plotly_chart(fig_RL, use_container_width= True)
             
             with st.expander('Ver Reporte Estadístico Completo', expanded= False):
                 st.text(modelo.summary())
-        else:
-            st.info('Configure los parámetros y presione Calcular para visualizar los resultados')
