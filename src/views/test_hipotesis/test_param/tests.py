@@ -166,10 +166,15 @@ def render_pruebas_param(df):
             estadistico = st.session_state.param_estadistico
             p_valor = st.session_state.param_p_valor
             if st.session_state.param_calculado:
+                if abs(estadistico) < 0.0001:
+                    stat_txt = f'{estadistico:.2e}'
+                else:
+                    stat_txt = f'{estadistico:.4f}'
+                
                 with col_metricas[0]:
                     st.metric(
                         f'Estadístico {label_estadistico}',
-                        value= f'{estadistico:.4f}'
+                        value= stat_txt
                     )
                 
                 if p_valor < 0.0001:

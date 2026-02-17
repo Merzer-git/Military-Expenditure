@@ -158,13 +158,18 @@ def render_ind_homo(df):
                 
                 col_res = st.columns(3)
                 
+                if abs(stat) < 0.0001:
+                    stat_txt = f'{stat:.2e}'
+                else:
+                    stat_txt = f'{stat:.4f}'
+                
                 with col_res[0]:
                     st.metric(
                         'Estadístico',
-                        value= f'{stat:.2f}'
+                        value= stat_txt
                     )
                 
-                if float(p_valor) < 0.0001:
+                if p_valor < 0.0001:
                     p_valor_txt = f'{p_valor:.2e}'
                 else:
                     p_valor_txt = f'{p_valor:.4f}'
@@ -181,7 +186,7 @@ def render_ind_homo(df):
                         value= int(gl)
                     )
                 
-                if float(p_valor) < alpha:
+                if p_valor < alpha:
                     st.error('La hipótesis nula se **rechaza**.')
                 else:
                     st.success('La hípótesis nula **no se rechaza**.')

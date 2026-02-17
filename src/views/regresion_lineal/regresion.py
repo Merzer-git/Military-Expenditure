@@ -114,6 +114,12 @@ def render_regresion(df):
             pendiente = modelo.params[var_x]
             r2 = modelo.rsquared
             p_valor = modelo.pvalues[var_x]
+            
+            if abs(pendiente) < 0.0001:
+                pendiente_txt = f'{pendiente:.2e}'
+            else:
+                pendiente_txt = f'{pendiente:.4f}'
+            
             if p_valor < 0.0001:
                 p_valor_txt = f'{p_valor:.2e}'
             else:
@@ -122,21 +128,24 @@ def render_regresion(df):
             if p_valor < 0.05:
                 etiqueta_delta = 'Significativo (Existe Relación)'
                 color_delta = 'normal'
+                flecha_delta = 'up'
             else:
                 etiqueta_delta = 'No Significativo (Sin Relación)'
                 color_delta = 'inverse'
+                flecha_delta = 'down'
             
             st.latex(f'Y = {intercepto:.4f} + {pendiente:.4f}X')            
             st.divider()
             
             col_metrics = st.columns(3)
             col_metrics[0].metric('$R^2$ (Ajuste)', f'{r2:.4f}')
-            col_metrics[1].metric(r'Pendiente - $\beta$', f'{pendiente:.4f}')
+            col_metrics[1].metric(r'Pendiente - $\beta$', pendiente_txt)
             col_metrics[2].metric(
                 '$p$-valor',
                 p_valor_txt,
                 delta= etiqueta_delta,
-                delta_color= color_delta
+                delta_color= color_delta,
+                delta_arrow= flecha_delta
             )
             
             df_plot = df_RL.sort_values(by= var_x).copy()

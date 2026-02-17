@@ -121,20 +121,25 @@ def render_bondad_ajuste(df):
                 col_metricas = st.columns(2)
                 
                 if st.session_state.no_param_p_valor < 0.0001:
-                    p_valor_text = f'{st.session_state.no_param_p_valor:.2e}'
+                    p_valor_txt = f'{st.session_state.no_param_p_valor:.2e}'
                 else:
-                    p_valor_text = f'{st.session_state.no_param_p_valor:.4f}'
+                    p_valor_txt = f'{st.session_state.no_param_p_valor:.4f}'
+                
+                if abs(st.session_state.no_param_estadistico) < 0.0001:
+                    stat_txt = f'{st.session_state.no_param_estadistico:.2e}'
+                else:
+                    stat_txt = f'{st.session_state.no_param_estadistico:.4f}'
                     
                 with col_metricas[0]:
                     st.metric(
                         'Estadístico',
-                        value= f'{st.session_state.no_param_estadistico:.4f}'
+                        value= stat_txt
                     )
                     
                 with col_metricas[1]:
                     st.metric(
                         '*p*-Valor',
-                        value= p_valor_text
+                        value= p_valor_txt
                     )
             
             with col_resultado[1]:
